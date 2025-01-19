@@ -1,5 +1,5 @@
 "use client";
-import { Form, Input, Select, SelectItem, Button } from "@heroui/react";
+import { Form, Input, Button } from "@heroui/react";
 import { useState } from "react";
 
 export default function Register() {
@@ -19,6 +19,7 @@ export default function Register() {
     if ((value.match(/[^a-z]/gi) || []).length < 1) {
       return "Password needs at least 1 symbol";
     }
+
     return null;
   };
 
@@ -32,6 +33,7 @@ export default function Register() {
     if ((value.match(/[^a-z]/gi) || []).length < 1) {
       return "PhoneNumber needs at least 1 symbol";
     }
+
     return null;
   };
 

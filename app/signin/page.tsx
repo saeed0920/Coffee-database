@@ -13,7 +13,6 @@ export default function Login() {
       onSubmit={(e) => {
         e.preventDefault();
         let data = Object.fromEntries(new FormData(e.currentTarget));
-
       }}
     >
 
