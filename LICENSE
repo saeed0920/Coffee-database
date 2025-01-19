@@ -1,6 +1,10 @@
 MIT License
 
+<<<<<<< HEAD
 Copyright (c) 2025 Saeed
+=======
+Copyright (c) 2023 Next UI
+>>>>>>> 5fefec1 (setup files + setup register page and login page)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
