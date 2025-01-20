@@ -1,9 +1,13 @@
 "use client"
-import React from "react";
-import {Form, Input, Button} from "@heroui/react";
+import { useRouter } from 'next/navigation'
+
+import React, { useState } from "react";
+import {Form, Input, Button, user} from "@heroui/react";
 
 export default function Login() {
-  const [action, setAction] = React.useState(null);
+  const router = useRouter()
+  const [action, setAction] = useState(null);
+  const [isLoading , setIsLoading] = useState(false)
 
   return (
     <Form
@@ -11,8 +15,29 @@ export default function Login() {
       validationBehavior="native"
       onReset={() => setAction("reset")}
       onSubmit={(e) => {
+        setIsLoading(true)
         e.preventDefault();
         let data = Object.fromEntries(new FormData(e.currentTarget));
+
+        fetch(`${process.env.localHost}/login` , {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+        })
+        .then(response => {
+          
+          if (response.ok)  response.json().then((data) => {
+          localStorage.setItem("token", `${data.token}`);
+          if (data.IsAdmin) {
+           router.push("/admin") 
+          }else router.push("/")
+          })
+            else {
+          setIsLoading(false)
+          }
+        })
       }}
     >
 
@@ -37,7 +62,7 @@ export default function Login() {
       />
 
       <div className="flex gap-2">
-        <Button color="primary" type="submit">
+        <Button isLoading={isLoading} color="primary" type="submit">
           Submit
         </Button>
         <Button type="reset" variant="flat">

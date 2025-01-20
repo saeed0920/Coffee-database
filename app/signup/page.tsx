@@ -1,125 +1,93 @@
 "use client";
-import { Form, Input, Button } from "@heroui/react";
+import { useRouter } from 'next/navigation'
+import { Form, Input, Button , DatePicker } from "@heroui/react";
 import { useState } from "react";
+import { usePathname } from 'next/navigation';
 
-export default function Register() {
+
+export default function Register({onCloseD} : any) {
   const [password, setPassword] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [yearDate, setYearDate]  = useState("");
+  const [address, setAddress] = useState("");
+  const [name, setName]  = useState("");
   const [submitted, setSubmitted] = useState("");
   const [errors, setErrors] = useState({});
+  const [isLoading , setIsloading] = useState(false)
+  const router = useRouter()
+  const pathname = usePathname();
+  const isSignUp = pathname === "/signup";
 
-  // Real-time password validation
-  const getPasswordError = (value) => {
-    if (value.length < 4) {
-      return "Password must be 4 characters or more";
-    }
-    if ((value.match(/[A-Z]/g) || []).length < 1) {
-      return "Password needs at least 1 uppercase letter";
-    }
-    if ((value.match(/[^a-z]/gi) || []).length < 1) {
-      return "Password needs at least 1 symbol";
-    }
-
-    return null;
-  };
-
-  const getPhoneNumberError = (value) => {
-    if (value.length < 4) {
-      return "PhoneNumber must be 4 characters or more";
-    }
-    if ((value.match(/[A-Z]/g) || []).length < 1) {
-      return "PhoneNumber needs at least 1 uppercase letter";
-    }
-    if ((value.match(/[^a-z]/gi) || []).length < 1) {
-      return "PhoneNumber needs at least 1 symbol";
-    }
-
-    return null;
-  };
-
-  const onSubmit = (e) => {
+  const onSubmit = (e : any) => {
+    setIsloading(true)
     e.preventDefault();
-    const data = Object.fromEntries(new FormData(e.currentTarget));
-
-    // Custom validation checks
-    const newErrors = {};
-
-    // Password validation
-    const passwordError = getPasswordError(data.password);
-
-    const phoneNumberError = getPhoneNumber(data.password);
-
-    if (passwordError) {
-      newErrors.password = passwordError;
+    let data = Object.fromEntries(new FormData(e.currentTarget));
+    data.birthYear = Number(data.birthYear.slice(0,4))
+    isSignUp ? null : data.code = Number(data.code)
+    const headers : any = {
+    'Content-Type': 'application/json',
     }
+    !isSignUp ? headers.Authorization = `${localStorage.getItem("token")}` : null;
 
-    // Username validation
-    if (data.name === "admin") {
-      newErrors.name = "Nice try! Choose a different username";
-    }
+    fetch(`${process.env.localHost}${isSignUp ? "/signup" : "/personel"}`, {
+      method: 'POST',
+      headers,
+  body: JSON.stringify(data),
+})
+  .then(res => {
+    if (isSignUp) 
+    router.push('/signin')
+  else {
+  onCloseD()
 
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-
-      return;
-    }
-
-    if (data.terms !== "true") {
-      setErrors({ terms: "Please accept the terms" });
-
-      return;
-    }
-
-    // Clear errors and submit
+  }
+  })
+     // Clear errors and submit
     setErrors({});
-    setSubmitted(data);
   };
 
   return (
     <Form
-      className="w-full justify-center items-center space-y-4"
+      className="w-full mx-auto max-w-xs flex flex-col gap-2"
       validationBehavior="native"
       validationErrors={errors}
       onReset={() => setSubmitted(null)}
       onSubmit={onSubmit}
     >
-      <div className="flex flex-col gap-4 max-w-md">
+      <div className="flex flex-col gap-4 w-[18rem]">
+
+       { isSignUp ?
         <Input
           isRequired
-          errorMessage={({ validationDetails }) => {
-            if (validationDetails.valueMissing) {
-              return "Please enter your name";
-            }
-
-            return errors.name;
-          }}
           label="Name"
           labelPlacement="outside"
           name="name"
-          placeholder="Enter your name"
-        />
+          placeholder="Enter your Name"
+        /> : ""} 
+
+        {  pathname === "/signup" ? ""  :
+        <Input
+          isRequired
+          label="Code"
+          labelPlacement="outside"
+          type="number"
+          name="code"
+          placeholder="Enter your Code"
+        /> 
+        }
 
         <Input
           isRequired
-          errorMessage={({ validationDetails }) => {
-            if (validationDetails.valueMissing) {
-              return "Please enter your email";
-            }
-            if (validationDetails.typeMismatch) {
-              return "Please enter a valid email address";
-            }
-          }}
-          label="Email"
+           label="Email"
           labelPlacement="outside"
           name="email"
           placeholder="Enter your email"
           type="email"
         />
 
+{isSignUp ?
         <Input
           isRequired
-          errorMessage={getPasswordError(password)}
-          isInvalid={getPasswordError(password) !== null}
           label="Password"
           labelPlacement="outside"
           name="password"
@@ -127,25 +95,46 @@ export default function Register() {
           type="password"
           value={password}
           onValueChange={setPassword}
-        />
+        /> : ""} 
 
+{ isSignUp ? 
         <Input
           isRequired
-          errorMessage={getPhoneNumberError(phoneNumber)}
-          isInvalid={getPhoneNumberError(phoneNumber) !== null}
-          label="PhoneNumber"
+          label="Phone Number"
           labelPlacement="outside"
-          name="phone"
-          placeholder="Enter your phone number"
+          name="PhoneNumber"
+          placeholder="Enter your Phone Number"
           type="number"
           value={phoneNumber}
           onValueChange={setPhoneNumber}
-        />
+        /> : ""} 
 
-        {errors.terms && <span className="text-danger text-small">{errors.terms}</span>}
+        <DatePicker name="birthYear"  className="max-w-[284px]" label="Birth date" />
+
+{ isSignUp ? 
+        <Input
+          isRequired
+          label="Address"
+          labelPlacement="outside"
+          name="address"
+          placeholder="Enter your Address"
+          value={address}
+          onValueChange={setAddress}
+        /> : ""} 
+
+{ isSignUp ? "" : 
+        <Input
+          isRequired
+          label="Job Rule"
+          labelPlacement="outside"
+          name="Description"
+          placeholder="Enter your Job Role"
+        />} 
+
+
 
         <div className="flex gap-4">
-          <Button className="w-full" color="primary" type="submit">
+          <Button isLoading={isLoading} className="w-full" color="primary" type="submit">
             Submit
           </Button>
           <Button type="reset" variant="bordered">
