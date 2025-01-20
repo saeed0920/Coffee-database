@@ -6,7 +6,7 @@ import {Form, Input, Button, user} from "@heroui/react";
 
 export default function Login() {
   const router = useRouter()
-  const [action, setAction] = useState(null);
+  const [action, setAction] : any = useState(null);
   const [isLoading , setIsLoading] = useState(false)
 
   return (
@@ -27,7 +27,6 @@ export default function Login() {
         body: JSON.stringify(data),
         })
         .then(response => {
-          
           if (response.ok)  response.json().then((data) => {
           localStorage.setItem("token", `${data.token}`);
           if (data.IsAdmin) {

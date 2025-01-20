@@ -28,7 +28,7 @@ const Admin =  () => {
     const {isOpen, onOpen, onOpenChange} = useDisclosure();
     const {isOpen : isOpenD, onOpen  : onOpenD, onOpenChange : onOpenChangeD }  = useDisclosure();
     const {isOpen : isOpenC, onOpen  : onOpenC, onOpenChange : onOpenChangeC }  = useDisclosure();
-    const [modelData , setModelData] = useState(null)
+    const [modelData , setModelData] : any = useState(null)
     const [editBtnIsLoading , setEditBtnIsLoding] = useState(false)
     const [fetchData , setFetchData] = useState(true)
 
@@ -189,7 +189,7 @@ return (
       onSubmit={(e) => {
      setEditBtnIsLoding(true)
     e.preventDefault();
-    let data = Object.fromEntries(new FormData(e.currentTarget));
+    let data : any = Object.fromEntries(new FormData(e.currentTarget));
     data.birthYear = Number(data.birthYear.slice(0,4))
     data.code = Number(data.code)
 
@@ -286,7 +286,7 @@ return (
       onSubmit={(e) => {
      setEditBtnIsLoding(true)
     e.preventDefault();
-    let data = Object.fromEntries(new FormData(e.currentTarget));
+    let data : any = Object.fromEntries(new FormData(e.currentTarget));
     data.price = Number(data.price)
     fetch(`${process.env.localHost}/events${modelData?.Price ?  "/" + modelData.ID : ""}`, {
       method: modelData?.Price ? "PUT" :  "POST" ,

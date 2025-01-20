@@ -11,7 +11,7 @@ export default function Register({onCloseD} : any) {
   const [yearDate, setYearDate]  = useState("");
   const [address, setAddress] = useState("");
   const [name, setName]  = useState("");
-  const [submitted, setSubmitted] = useState("");
+  const [submitted, setSubmitted] : any = useState("");
   const [errors, setErrors] = useState({});
   const [isLoading , setIsloading] = useState(false)
   const router = useRouter()
@@ -21,13 +21,13 @@ export default function Register({onCloseD} : any) {
   const onSubmit = (e : any) => {
     setIsloading(true)
     e.preventDefault();
-    let data = Object.fromEntries(new FormData(e.currentTarget));
+    let data : any = Object.fromEntries(new FormData(e.currentTarget));
     data.birthYear = Number(data.birthYear.slice(0,4))
     isSignUp ? null : data.code = Number(data.code)
     const headers : any = {
     'Content-Type': 'application/json',
     }
-    !isSignUp ? headers.Authorization = `${localStorage.getItem("token")}` : null;
+    !isSignUp ? headers.Authorization = `${typeof window !== "undefined" ? localStorage.getItem("token") : ""}` : null;
 
     fetch(`${process.env.localHost}${isSignUp ? "/signup" : "/personel"}`, {
       method: 'POST',
@@ -39,7 +39,6 @@ export default function Register({onCloseD} : any) {
     router.push('/signin')
   else {
   onCloseD()
-
   }
   })
      // Clear errors and submit

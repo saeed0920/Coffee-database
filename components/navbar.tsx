@@ -16,12 +16,17 @@ import { useRouter , usePathname} from 'next/navigation'
 
 
 export const Navbar = () => {
-  const [isLogin , setIsLogin ] = useState(localStorage?.getItem?.('token')?.length > 0 ? true : false);
+
+  let token : any  = "";
+  if (typeof window !== 'undefined')  token = localStorage?.getItem("token")
+
+  const [isLogin , setIsLogin ] = useState(token?.length > 0 ? true : false);
   const router = useRouter()
   const pathName = usePathname()
 
+
   useEffect(() => {
-    setIsLogin(localStorage?.getItem?.('token')?.length > 0 ? true : false)
+    setIsLogin(token?.length > 0 ? true : false)
   },[pathName])
 
   return (
@@ -46,7 +51,9 @@ export const Navbar = () => {
         </div>
       : <Button onPress={
         () => { 
+          if (typeof window !== 'undefined')
           localStorage.clear()
+
           setIsLogin(false)
           router.push("/")
         }
